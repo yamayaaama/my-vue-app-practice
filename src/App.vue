@@ -1,15 +1,32 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <UserLogin/>
+  <UserLogin v-if="!user" />
+  <UserDashboard v-else :user="user" />
 </template>
 
 <script>
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase';
+
 import UserLogin from './components/Login.vue'
+import UserDashboard from '@/components/Dashbord.vue'
 
 export default {
   name: 'App',
   components: {
-    UserLogin
+    UserLogin,
+    UserDashboard
+  },
+  data() { //コンポーネントがマウントされたときに実行される
+    console.log('Appコンポーネントがマウントされました')
+    return {
+      user: null
+    }
+  },
+  mounted() {
+    onAuthStateChanged(auth, (user) => {
+      this.user = user
+    })
   }
 }
 </script>
